@@ -1,0 +1,50 @@
+Function print_karnaugh_map(inputs, outputs):
+    num_vars = length(inputs)
+    num_outputs = length(outputs[0])
+    // Print header
+    print("Karnaugh Map:")
+    header = join(" | ", join(inputs, outputs))
+    print(header)
+    // Print separator
+    separator = repeat("-", length(header))
+    print(separator)
+    // Print rows
+    For i from 0 to 2^num_vars exclusive:
+        row_inputs = format(i, '0{}b'.format(num_vars))
+        row_outputs = outputs[i]
+        row = join(" | ", join(row_inputs, row_outputs))
+        print(row)
+
+Function karnaugh_minimize(inputs, outputs):
+    num_vars = length(inputs)
+    num_outputs = length(outputs[0])
+    // Create Karnaugh Map
+    karnaugh_map = {}
+    For i from 0 to 2^num_vars exclusive:
+        row_inputs = format(i, '0{}b'.format(num_vars))
+        karnaugh_map[row_inputs] = outputs[i]
+    // Find implicants
+    implicants = []
+    For row_inputs, row_outputs in karnaugh_map:
+        If '1' in row_outputs:
+            implicants.append(row_inputs)
+    // Simplify implicants
+    simplified_implicants = []
+    For implicant1 in implicants:
+        For implicant2 in implicants:
+            diff = sum(a != b for a, b in zip(implicant1, implicant2))
+            If diff == 1:
+                common = join(a if a == b else '-' for a, b in zip(implicant1, implicant2))
+                If common not in simplified_implicants:
+                    simplified_implicants.append(common)
+    return simplified_implicants
+
+// Example usage
+inputs = ['A', 'B']
+outputs = ['00', '01', '11', '10']
+
+print_karnaugh_map(inputs, outputs)
+simplified_implicants = karnaugh_minimize(inputs, outputs)
+print("\nSimplified Implicants:")
+print(simplified_implicants)
+￼Enter
